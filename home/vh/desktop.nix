@@ -7,8 +7,7 @@
 
 {
   home.packages = with pkgs; [
-    grim # screenshot
-    slurp # region select
+    hyprshot # screenshot (native Hyprland wrapper over grim+slurp)
     wl-clipboard # wl-copy / wl-paste
     pavucontrol # audio mixer GUI
     playerctl # media keys
@@ -43,6 +42,10 @@
 
   # Clipboard history (query with `cliphist list`).
   services.cliphist.enable = true;
+
+  # Wallpaper daemon. No image configured yet -- add settings.preload /
+  # settings.wallpaper once a wallpaper file exists.
+  services.hyprpaper.enable = true;
 
   # Idle -> lock -> screen off.
   services.hypridle = {
