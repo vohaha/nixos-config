@@ -66,6 +66,9 @@
 
   programs.waybar = {
     enable = true;
+    # Off by default: without this home-manager installs the binary but
+    # never creates a user service, so the bar never starts.
+    systemd.enable = true;
     settings.mainBar = {
       layer = "top";
       position = "top";
