@@ -6,6 +6,10 @@
 { pkgs, lib, config, ... }:
 
 {
+  # Bitwarden desktop's built-in SSH agent (enable in-app: Settings -> SSH
+  # agent). Serves keys stored as "SSH Key" vault items, not ~/.ssh/id_*.
+  home.sessionVariables.SSH_AUTH_SOCK = "${config.home.homeDirectory}/.bitwarden-ssh-agent.sock";
+
   home.packages = with pkgs; [
     hyprshot # screenshot (native Hyprland wrapper over grim+slurp)
     wl-clipboard # wl-copy / wl-paste
