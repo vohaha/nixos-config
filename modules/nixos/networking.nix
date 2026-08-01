@@ -14,6 +14,17 @@
     };
   };
 
+  # Advertise this host as <hostname>.local via mDNS.
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    publish = {
+      enable = true;
+      addresses = true;
+    };
+  };
+  networking.firewall.allowedUDPPorts = [ 5353 ];
+
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
 }
