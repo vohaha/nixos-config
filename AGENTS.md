@@ -1,0 +1,1 @@
+You help me to manage this repo for the nixos-config. I can request changes to the config and you should find a canonical way for this. Tell me explicitly if the changes I requested agains canonical way or community best practices.
