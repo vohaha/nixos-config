@@ -20,6 +20,13 @@
 
   programs.firefox.enable = true;
 
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true;
+    dedicatedServer.openFirewall = false;
+    gamescopeSession.enable = true;
+  };
+
   environment.systemPackages = with pkgs; [
     wofi
     tuigreet
