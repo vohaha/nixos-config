@@ -2,12 +2,8 @@
 { pkgs, ... }:
 
 {
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-    viAlias = true;
-    vimAlias = true;
-  };
+  # neovim for the user lives in home/vh/neovim.nix. vim stays here so root
+  # and rescue shells always have a usable editor.
 
   # Run dynamically-linked binaries that aren't packaged for nix.
   programs.nix-ld.enable = true;

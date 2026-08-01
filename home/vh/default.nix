@@ -4,6 +4,7 @@
   imports = [
     ./desktop.nix
     ./git.nix
+    ./neovim.nix
     ./shell.nix
     ./zed.nix
   ];
