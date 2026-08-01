@@ -9,6 +9,9 @@
 
   security.polkit.enable = true;
 
+  hardware.bluetooth.enable = true;
+  services.blueman.enable = true; # tray applet + GUI pairing
+
   services.displayManager.gdm.enable = false;
   services.greetd = {
     enable = true;
