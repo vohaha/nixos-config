@@ -85,21 +85,24 @@
   # services.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
+  # Packages for this user live in home.nix (home-manager).
   users.users.vh = {
     isNormalUser = true;
     extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-    packages = with pkgs; [
-      tree
-      ghostty
-      zed-editor
-      brave
-    ];
   };
 
   environment.shellAliases = {
-    nrs = "sudo nixos-rebuild switch --flake /etc/nixos";
-    ned = "sudo $EDITOR /etc/nixos/configuration.nix";
-    ngc = "sudo nix-collect-garbage -d";
+    # nrs/ngc are replaced by `nh os switch` and the programs.nh.clean timer.
+    ned = "$EDITOR /home/vh/nixos-config/configuration.nix";
+  };
+
+  programs.nh = {
+    enable = true;
+    flake = "/home/vh/nixos-config"; # sets $NH_FLAKE
+    clean = {
+      enable = true; # systemd timer; replaces manual nix-collect-garbage
+      extraArgs = "--keep 5 --keep-since 7d";
+    };
   };
 
   programs.firefox = {
@@ -126,7 +129,6 @@
     tuigreet
     bitwarden-desktop
     claude-code
-    git
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
