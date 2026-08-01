@@ -1,13 +1,16 @@
 # Neovim, set up for LazyVim.
 #
 # Split of responsibilities: Nix provides every binary (neovim, language
-# servers, formatters, debuggers), while the Lua config stays mutable in
-# ~/.config/nvim so plugins and keymaps can be iterated on without a rebuild.
+# servers, formatters, debuggers), while the Lua config stays mutable so
+# plugins and keymaps can be iterated on without a rebuild. The Lua files
+# live in this repo (./nvim-lua) for version control, and are symlinked into
+# ~/.config/nvim/lua by the activation script below -- editing them edits the
+# repo directly, no rebuild needed to pick up changes.
 #
 # Mason is disabled in the Lua config on purpose: it downloads pre-built,
 # dynamically-linked binaries that assume an FHS layout and are unreliable on
 # NixOS. Everything Mason would fetch is listed below instead.
-{ pkgs, ... }:
+{ pkgs, lib, config, ... }:
 
 {
   programs.neovim = {
@@ -74,4 +77,14 @@
       stylua
     ];
   };
+
+  # Symlink the repo's Lua files into place instead of copying them via
+  # home.file. Deliberately NOT `${./nvim-lua}` -- that would resolve to a
+  # read-only copy in /nix/store, defeating the point. This points straight
+  # at the git checkout so editing the files edits the working tree (no
+  # rebuild to pick up changes, and `git status` here shows what changed).
+  home.activation.linkNvimLua = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    run rm -rf "${config.home.homeDirectory}/.config/nvim/lua"
+    run ln -sfn "${config.home.homeDirectory}/nixos-config/home/vh/nvim-lua" "${config.home.homeDirectory}/.config/nvim/lua"
+  '';
 }
