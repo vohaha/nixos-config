@@ -14,61 +14,44 @@ nh os switch          # no sudo, no path -- $NH_FLAKE points here
 Layout: `hosts/` = machine-specific, `modules/nixos/` = reusable system
 config, `home/vh/` = per-user.
 
-## Pending -- finish these first
+## Done
 
-- [ ] **Remove the stale `/etc/nixos`.** Verified byte-identical to commit
-      `a1eb002`, so nothing is lost. Blocked on a permission prompt, run
-      manually:
-      ```
-      sudo rm /etc/nixos/{configuration,flake,hardware-configuration}.nix \
-              /etc/nixos/flake.lock && sudo rmdir /etc/nixos
-      ```
-      Removing the dir makes a bare `nixos-rebuild` (no `--flake`) fail
-      loudly instead of building a stale config.
+- [x] Config moved into git, split into hosts/modules/home.
+- [x] home-manager as a NixOS module; `nh` with automatic GC timer.
+- [x] Stale `/etc/nixos` removed.
+- [x] Audio: PipeWire (`modules/nixos/audio.nix`) with rtkit + 32-bit ALSA.
+- [x] `time.timeZone = "Europe/Kyiv"`.
+- [x] Fonts: JetBrainsMono Nerd Font, set as default monospace.
+- [x] Desktop tooling (`home/vh/desktop.nix`): waybar, mako, hyprlock,
+      hypridle, cliphist, grim/slurp, wl-clipboard, pavucontrol, playerctl,
+      brightnessctl.
+- [x] Shell (`home/vh/shell.nix`): managed bash, starship, direnv +
+      nix-direnv.
 
-- [ ] **Audio does not work.** Neither pipewire nor pulseaudio is enabled.
-      Add `modules/nixos/audio.nix`:
-      ```nix
-      services.pipewire = {
-        enable = true;
-        alsa.enable = true;
-        alsa.support32Bit = true;
-        pulse.enable = true;
-      };
-      ```
+## Verify after the next rebuild
 
-- [ ] **Set `time.timeZone`.** Currently unset, so the system is on UTC.
+Everything below needs a `nh os switch` and a fresh Hyprland session:
 
-## Desktop -- Hyprland is a bare compositor right now
+- [ ] Sound actually works (`pavucontrol` shows a sink; test playback).
+- [ ] Waybar appears and its glyphs render as icons, not boxes.
+- [ ] Notifications appear (`notify-send hello`).
+- [ ] `hyprlock` locks (test manually **before** trusting the 10-min idle
+      timer, so you don't get locked out by a broken lock screen).
+- [ ] Clipboard history works (`cliphist list`).
+- [ ] Screenshot: `grim -g "$(slurp)" out.png`.
+- [ ] Keybinds: nothing above binds any keys. Hyprland's Lua config still
+      needs bindings for screenshots, the lock, and the clipboard picker.
 
-None of the usual supporting pieces are installed. Prefer home-manager
-modules over bare packages where they exist (real config options):
+## Pending
 
-- [ ] Notifications: `mako`
-- [ ] Bar: `waybar`
-- [ ] Screenshots: `grim` + `slurp`
-- [ ] Clipboard: `wl-clipboard` + `cliphist`
-- [ ] Lock / idle: `hyprlock` + `hypridle`
-- [ ] Wallpaper: `hyprpaper`
-- [ ] Audio GUI + media keys: `pavucontrol`, `playerctl`
-- [ ] A Nerd Font -- the current font set has no monospace/icon font, so
-      Waybar and terminal glyphs will render as boxes.
-
-- [ ] **Figure out `~/.config/hypr/hyprland.lua`.** Hyprland reads
-      `hyprland.conf`; a `.lua` file is not a filename it loads. Leftover,
-      or from some wrapper? Resolve before writing Hyprland config, then
-      decide whether to manage it declaratively via home-manager.
-
-## Developer environment
-
-- [ ] **`direnv` + `nix-direnv`** -- biggest quality-of-life win. Per-project
-      toolchains on `cd`, with caching so dev shells survive GC.
-- [ ] **Shell config.** Currently plain bash with nothing managed. Either
-      `programs.bash` in home-manager, or switch to zsh/fish, to get
-      prompt/history/completion under version control.
-
-## Safety
-
+- [ ] **Hyprland keybinds + wallpaper.** `~/.config/hypr/hyprland.lua` is
+      still mutable and unmanaged. Decide whether to bring it under
+      home-manager (`xdg.configFile`) or leave it hand-edited. Note Hyprland
+      0.56+ uses the Lua format (`hl.monitor({...})`); the older
+      `hyprland.conf` is a different, still-supported format.
+- [ ] **hyprpaper** deliberately skipped -- it needs an actual wallpaper
+      image, and enabling it without one leaves a failing user service.
+      Pick an image, then add `services.hyprpaper`.
 - [ ] **Push this repo to a remote.** It is the entire definition of this
       machine and exists only on this disk. `hardware-configuration.nix` is
       the painful part to recreate.
@@ -79,11 +62,12 @@ modules over bare packages where they exist (real config options):
 - [ ] `services.printing.enable`
 - [ ] Add `networkmanager` to `users.users.vh.extraGroups` -- only removes
       the polkit prompt when changing network settings. Skipped
-      deliberately to keep the refactor behaviour-neutral.
+      deliberately to keep an earlier refactor behaviour-neutral.
 - [ ] Move Zed settings into `programs.zed-editor.userSettings` once they
       stabilise. Note: doing so makes `~/.config/zed/settings.json` a
       read-only store symlink and Zed's in-app settings UI stops working
       unless `mutableUserSettings` is set.
+- [ ] `services.pipewire.jack.enable` for pro-audio clients.
 
 ## Gotchas worth remembering
 
@@ -95,3 +79,5 @@ modules over bare packages where they exist (real config options):
 - Shell aliases only appear in **new** shells after a rebuild.
 - `nh os switch` runs without `sudo`; it escalates on its own.
 - GC is automatic via the `nh-clean.timer` (keeps 5 generations / 7 days).
+- Don't configure tools from memory -- see AGENTS.md. Hyprland's Lua config
+  and home-manager's `programs.git.settings` rename both caught me out.

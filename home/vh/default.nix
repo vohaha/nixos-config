@@ -2,7 +2,9 @@
 
 {
   imports = [
+    ./desktop.nix
     ./git.nix
+    ./shell.nix
     ./zed.nix
   ];
 

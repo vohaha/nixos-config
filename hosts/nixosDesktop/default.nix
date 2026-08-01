@@ -5,15 +5,18 @@
   imports = [
     ./hardware-configuration.nix
 
+    ../../modules/nixos/audio.nix
     ../../modules/nixos/base.nix
     ../../modules/nixos/boot.nix
     ../../modules/nixos/desktop.nix
+    ../../modules/nixos/fonts.nix
     ../../modules/nixos/networking.nix
     ../../modules/nixos/nix.nix
     ../../modules/nixos/users.nix
   ];
 
   networking.hostName = "nixosDesktop";
+  time.timeZone = "Europe/Kyiv";
 
   # Hardware specific to this machine.
   hardware.cpu.amd.updateMicrocode = true;
