@@ -16,8 +16,23 @@
     viAlias = true;
     vimAlias = true;
 
-    withNodeJs = true; # required by several LazyVim plugins
+    withNodeJs = true;
     withPython3 = true;
+
+    # home-manager always generates ~/.config/nvim/init.lua when this module
+    # has anything to configure (provider paths, below), so it cannot stay a
+    # hand-written file. Keep the generated init.lua minimal and have it pull
+    # in ~/.config/nvim/lua/*.lua, which home-manager does NOT manage -- those
+    # stay mutable and editable without a rebuild.
+    initLua = ''
+      vim.g.mapleader = " "
+      vim.g.maplocalleader = "\\"
+
+      require("options")
+      require("plugins")
+      require("lsp")
+      require("keymaps")
+    '';
 
     extraPackages = with pkgs; [
       # --- LazyVim prerequisites ---
