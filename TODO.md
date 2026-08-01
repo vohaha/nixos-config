@@ -14,33 +14,7 @@ nh os switch          # no sudo, no path -- $NH_FLAKE points here
 Layout: `hosts/` = machine-specific, `modules/nixos/` = reusable system
 config, `home/vh/` = per-user.
 
-## Done
-
-- [x] Config moved into git, split into hosts/modules/home.
-- [x] home-manager as a NixOS module; `nh` with automatic GC timer.
-- [x] Stale `/etc/nixos` removed.
-- [x] Audio: PipeWire (`modules/nixos/audio.nix`) with rtkit + 32-bit ALSA.
-- [x] `time.timeZone = "Europe/Kyiv"`.
-- [x] Fonts: JetBrainsMono Nerd Font, set as default monospace.
-- [x] Desktop tooling (`home/vh/desktop.nix`): waybar, mako, hyprlock,
-      hypridle, cliphist, grim/slurp, wl-clipboard, pavucontrol, playerctl,
-      brightnessctl.
-- [x] Shell (`home/vh/shell.nix`): managed bash, starship, direnv +
-      nix-direnv.
-
 ## Verify after the next rebuild
-
-Everything below needs a `nh os switch` and a fresh Hyprland session:
-
-- [ ] Sound actually works (`pavucontrol` shows a sink; test playback).
-- [ ] Waybar appears and its glyphs render as icons, not boxes.
-- [ ] Notifications appear (`notify-send hello`).
-- [ ] `hyprlock` locks (test manually **before** trusting the 10-min idle
-      timer, so you don't get locked out by a broken lock screen).
-- [ ] Clipboard history works (`cliphist list`).
-- [ ] Screenshot: `grim -g "$(slurp)" out.png`.
-- [ ] Keybinds: nothing above binds any keys. Hyprland's Lua config still
-      needs bindings for screenshots, the lock, and the clipboard picker.
 
 ## Pending
 

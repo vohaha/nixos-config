@@ -3,6 +3,7 @@
 {
   imports = [
     ./desktop.nix
+    ./ghostty.nix
     ./git.nix
     ./neovim.nix
     ./shell.nix
@@ -12,11 +13,9 @@
   home.username = "vh";
   home.homeDirectory = "/home/vh";
 
-  home.packages = with pkgs; [
-    tree
-    ghostty
-    brave
-  ];
+  programs.brave.enable = true;
+
+  home.packages = with pkgs; [ tree ];
 
   programs.home-manager.enable = true;
 

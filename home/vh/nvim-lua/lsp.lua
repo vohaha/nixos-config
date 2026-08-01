@@ -23,7 +23,8 @@ local servers = {
             expr = '(builtins.getFlake (toString ./.)).nixosConfigurations.nixosDesktop.options',
           },
           ["home-manager"] = {
-            expr = '(builtins.getFlake (toString ./.)).nixosConfigurations.nixosDesktop.options.home-manager.users.type.getSubOptions []',
+            expr =
+            '(builtins.getFlake (toString ./.)).nixosConfigurations.nixosDesktop.options.home-manager.users.type.getSubOptions []',
           },
         },
       },

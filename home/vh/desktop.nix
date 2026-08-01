@@ -1,7 +1,9 @@
 # Hyprland session tooling: bar, notifications, lock/idle, clipboard,
 # screenshots. Hyprland itself is enabled system-wide (modules/nixos/desktop.nix);
-# its own config lives in ~/.config/hypr/hyprland.lua and is still mutable.
-{ pkgs, ... }:
+# its own config has no home-manager module (Lua format), so hyprland.lua
+# lives in this repo (./hypr) and is symlinked into place the same way
+# nvim's Lua config is -- see neovim.nix for the rationale.
+{ pkgs, lib, config, ... }:
 
 {
   home.packages = with pkgs; [
@@ -12,6 +14,22 @@
     playerctl # media keys
     brightnessctl # backlight / monitor brightness
   ];
+
+  home.activation.linkHyprlandLua = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    run ln -sfn "${config.home.homeDirectory}/nixos-config/home/vh/hypr/hyprland.lua" "${config.home.homeDirectory}/.config/hypr/hyprland.lua"
+  '';
+
+  # xdg.desktopEntries installs into share/applications (app launcher), not
+  # ~/.config/autostart, so this needs a plain xdg.configFile instead.
+  xdg.configFile."autostart/bitwarden.desktop".text = ''
+    [Desktop Entry]
+    Type=Application
+    Name=Bitwarden
+    Comment=Bitwarden startup script
+    Exec=${pkgs.bitwarden-desktop}/bin/bitwarden --autostart
+    StartupNotify=false
+    Terminal=false
+  '';
 
   # Notification daemon.
   services.mako = {

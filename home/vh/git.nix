@@ -8,5 +8,6 @@
       user.email = "dev@volodymyrkondratenko.com";
       init.defaultBranch = "main";
     };
+    ignores = [ "**/.claude/settings.local.json" ];
   };
 }
