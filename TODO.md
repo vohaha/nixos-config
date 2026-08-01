@@ -52,9 +52,26 @@ Everything below needs a `nh os switch` and a fresh Hyprland session:
 - [ ] **hyprpaper** deliberately skipped -- it needs an actual wallpaper
       image, and enabling it without one leaves a failing user service.
       Pick an image, then add `services.hyprpaper`.
+- [ ] **SSH key management.** Nothing is set up yet -- no keys in `~/.ssh`,
+      no agent, no known_hosts policy. Needed before pushing this repo
+      anywhere. Decide, in this order:
+      - Generate a key (`ssh-keygen -t ed25519 -C "dev@volodymyrkondratenko.com"`).
+        Keys themselves are **secrets: never commit them**, and never put a
+        private key in a nix file -- everything in the store is world-readable.
+      - Agent: `services.ssh-agent` (home-manager) or gnome-keyring. With
+        `AddKeysToAgent yes` so the passphrase is asked once per session.
+      - Declarative client config via `programs.ssh` in home-manager
+        (`matchBlocks` for hosts, `identityFile`, `identitiesOnly`). This part
+        *is* safe to commit -- it holds no secrets.
+      - If secrets ever do need to live in this repo, use sops-nix or
+        agenix rather than plain files.
+      - Optional: hardware-backed keys, or `services.openssh` host-key
+        hardening for inbound ssh (the daemon is already enabled).
+
 - [ ] **Push this repo to a remote.** It is the entire definition of this
       machine and exists only on this disk. `hardware-configuration.nix` is
-      the painful part to recreate.
+      the painful part to recreate. Blocked on SSH keys above (or use a
+      HTTPS remote with a token).
 
 ## Optional / when needed
 
@@ -63,6 +80,17 @@ Everything below needs a `nh os switch` and a fresh Hyprland session:
 - [ ] Add `networkmanager` to `users.users.vh.extraGroups` -- only removes
       the polkit prompt when changing network settings. Skipped
       deliberately to keep an earlier refactor behaviour-neutral.
+- [ ] **neovim:** treesitter parsers are not installed. `:TSInstall nix go
+      rust python typescript` for the languages you want. Only `c, lua,
+      markdown, query, vim, vimdoc` ship with neovim. Dropping
+      nvim-treesitter entirely is a legitimate choice -- it buys accurate
+      highlighting and structural text objects (mini.ai uses it), nothing
+      semantic. LSP covers meaning; treesitter covers shape.
+- [ ] **neovim:** no format-on-save. Formatters are installed and
+      `<leader>cf` formats manually; add conform.nvim or a BufWritePre
+      autocmd if automatic is wanted.
+- [ ] **neovim:** `~/.config/nvim` is unmanaged and outside git. Either
+      track it in this repo or give it its own.
 - [ ] Move Zed settings into `programs.zed-editor.userSettings` once they
       stabilise. Note: doing so makes `~/.config/zed/settings.json` a
       read-only store symlink and Zed's in-app settings UI stops working
