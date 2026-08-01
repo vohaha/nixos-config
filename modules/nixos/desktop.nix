@@ -1,0 +1,28 @@
+# Hyprland session, login manager, and desktop-facing apps.
+{ pkgs, ... }:
+
+{
+  programs.hyprland = {
+    enable = true;
+    withUWSM = true;
+  };
+
+  security.polkit.enable = true;
+
+  services.displayManager.gdm.enable = false;
+  services.greetd = {
+    enable = true;
+    settings.default_session = {
+      command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-session";
+      user = "greeter";
+    };
+  };
+
+  programs.firefox.enable = true;
+
+  environment.systemPackages = with pkgs; [
+    wofi
+    tuigreet
+    bitwarden-desktop
+  ];
+}
