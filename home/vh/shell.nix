@@ -32,4 +32,11 @@
     enableBashIntegration = true;
     nix-direnv.enable = true;
   };
+
+  # Fuzzy-matches previously visited directories by frecency: `z foo` cd's
+  # into the best match even if "foo" is a partial/fuzzy substring.
+  programs.zoxide = {
+    enable = true;
+    enableBashIntegration = true;
+  };
 }
