@@ -23,6 +23,21 @@
 
   programs.yazi.enable = true;
 
+  # Default browser handles images too (workspace 1 is pinned to it, see
+  # workspaceApps in hyprland.lua), overriding whatever registered itself as
+  # the image handler (e.g. Brave).
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "image/png" = "firefox.desktop";
+      "image/jpeg" = "firefox.desktop";
+      "image/gif" = "firefox.desktop";
+      "image/webp" = "firefox.desktop";
+      "image/bmp" = "firefox.desktop";
+      "image/svg+xml" = "firefox.desktop";
+    };
+  };
+
   home.activation.linkHyprlandLua = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run ln -sfn "${config.home.homeDirectory}/nixos-config/home/vh/hypr/hyprland.lua" "${config.home.homeDirectory}/.config/hypr/hyprland.lua"
   '';

@@ -211,6 +211,11 @@ hl.config({
     misc = {
         force_default_wallpaper = -1,    -- Set to 0 or 1 to disable the anime mascot wallpapers
         disable_hyprland_logo   = false, -- If true disables the random hyprland logo / anime girl background. :(
+
+        -- Without this, an already-running app (e.g. Firefox opening an
+        -- image via xdg-open) that requests focus/activation just sits on
+        -- its workspace unfocused instead of switching you to it.
+        focus_on_activate = true,
     },
 })
 
@@ -286,6 +291,7 @@ hl.window_rule({
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
 hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("hyprshot -m region"))
 hl.bind(mainMod .. " + SHIFT + F", hl.dsp.exec_cmd("hyprshot -m window"))
+hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("hyprshot -m region --clipboard-only"))
 
 -- Move focus with mainMod + arrow keys
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
@@ -405,6 +411,15 @@ hl.window_rule({
     name  = "bitwarden-workspace",
     match = { class = "^bitwarden$" },
     workspace = "10",
+})
+
+-- Pin Firefox to workspace 1 (matches the SUPER+1 raise-or-run binding) so
+-- windows opened outside that keybind -- e.g. xdg-open'ing an image from a
+-- file manager -- still land on the right desktop.
+hl.window_rule({
+    name  = "firefox-workspace",
+    match = { class = "^firefox$" },
+    workspace = "1",
 })
 
 -- Example window rules that are useful

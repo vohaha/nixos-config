@@ -1,7 +1,8 @@
 { ... }:
 
 {
-  home.shellAliases.nhoss = "nh os switch";
+  home.shellAliases.nos = "nh os switch";
+  home.shellAliases.cc = "claude";
 
   programs.bash = {
     enable = true;
