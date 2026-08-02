@@ -23,6 +23,10 @@ map("n", "<C-j>", "<C-w>j")
 map("n", "<C-k>", "<C-w>k")
 map("n", "<C-l>", "<C-w>l")
 
+-- Double Ctrl-W quits the window (closes Neovim if it's the last one).
+-- Overrides Vim's default <C-w><C-w> window-cycle binding.
+map("n", "<C-w><C-w>", "<cmd>q<cr>", { desc = "quit window" })
+
 -- Clear search highlight
 map("n", "<Esc>", "<cmd>nohlsearch<cr>")
 

@@ -29,7 +29,8 @@ hl.monitor({
 
 -- Set programs that you use
 local terminal    = "ghostty"
-local fileManager = "dolphin"
+local browser     = "firefox"
+local fileManager = "ghostty -e yazi"
 local menu        = "vicinae toggle"
 -- pkill -x matches against the kernel's truncated 15-char comm name, so the
 -- full 16-char "showmethekey-gtk" never matches -- truncate to match it.
@@ -223,7 +224,7 @@ hl.config({
         kb_layout  = "us,ua",
         kb_variant = "",
         kb_model   = "",
-        kb_options = "grp:alt_shift_toggle",
+        kb_options = "grp:ctrl_space_toggle",
         kb_rules   = "",
 
         follow_mouse = 1,
@@ -257,13 +258,12 @@ hl.device({
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
-hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
-local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
+local closeWindowBind = hl.bind(mainMod .. " + W", hl.dsp.window.close())
 -- closeWindowBind:set_enabled(false)
 hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + SHIFT + F6", hl.dsp.exec_cmd(showKeys))
 
 -- Pin the keys overlay to the top-right corner instead of wherever it opens.
@@ -316,13 +316,51 @@ hl.bind(mainMod .. " + CTRL + right", resizeActiveBy(resizeStep,  0), { repeatin
 hl.bind(mainMod .. " + CTRL + up",    resizeActiveBy(0, -resizeStep), { repeating = true })
 hl.bind(mainMod .. " + CTRL + down",  resizeActiveBy(0, resizeStep),  { repeating = true })
 
--- Switch workspaces with mainMod + [0-9]
--- Move active window to a workspace with mainMod + SHIFT + [0-9]
+-- Apps pinned to specific workspace numbers, keyed by their window class
+-- (StartupWMClass / app_id) so we can find an already-running instance.
+local workspaceApps = {
+    [1] = { class = "firefox",             cmd = browser },
+    [2] = { class = "com.mitchellh.ghostty", cmd = terminal },
+    [3] = { class = "dev.zed.Zed",         cmd = "zeditor" },
+}
+
+-- Focus an existing window of `class` if one exists (switching to its
+-- workspace), otherwise launch `cmd` on `workspace`.
+local function raiseOrRun(class, cmd, workspace)
+    return function()
+        local wins = hl.get_windows({ class = class })
+        if wins[1] then
+            hl.dispatch(hl.dsp.focus({ workspace = wins[1].workspace.id }))
+            hl.dispatch(hl.dsp.focus({ window = wins[1] }))
+        else
+            hl.dispatch(hl.dsp.focus({ workspace = workspace }))
+            hl.dispatch(hl.dsp.exec_cmd(cmd))
+        end
+    end
+end
+
+-- mainMod + [0-9]:               raise-or-run that workspace's app
+-- mainMod + SHIFT + [0-9]:       launch that workspace's app on the CURRENT workspace
+-- mainMod + ALT + SHIFT + [0-9]: move the active window to that workspace
 for i = 1, 10 do
     local key = i % 10 -- 10 maps to key 0
-    hl.bind(mainMod .. " + " .. key,             hl.dsp.focus({ workspace = i}))
-    hl.bind(mainMod .. " + SHIFT + " .. key,     hl.dsp.window.move({ workspace = i }))
+    local app = workspaceApps[i]
+
+    if app then
+        hl.bind(mainMod .. " + " .. key, raiseOrRun(app.class, app.cmd, i))
+        hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.exec_cmd(app.cmd))
+    else
+        hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))
+    end
+
+    hl.bind(mainMod .. " + ALT + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
 end
+
+-- Window groups (tabs): SUPER+G toggles the active window in/out of a group,
+-- SUPER+Tab / SUPER+SHIFT+Tab cycle tabs within the group.
+hl.bind(mainMod .. " + G",           hl.dsp.group.toggle())
+hl.bind(mainMod .. " + Tab",         hl.dsp.group.next())
+hl.bind(mainMod .. " + SHIFT + Tab", hl.dsp.group.prev())
 
 -- Example special workspace (scratchpad)
 hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("magic"))

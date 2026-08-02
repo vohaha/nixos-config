@@ -20,6 +20,8 @@
     showmethekey # on-screen display of keys being pressed
   ];
 
+  programs.yazi.enable = true;
+
   home.activation.linkHyprlandLua = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run ln -sfn "${config.home.homeDirectory}/nixos-config/home/vh/hypr/hyprland.lua" "${config.home.homeDirectory}/.config/hypr/hyprland.lua"
   '';
@@ -122,12 +124,13 @@
       height = 32;
       modules-left = [ "hyprland/workspaces" ];
       modules-center = [ "clock" ];
-      modules-right = [ "pulseaudio" "cpu" "memory" "network" "tray" ];
+      modules-right = [ "hyprland/language" "pulseaudio" "cpu" "memory" "network" "tray" ];
 
       clock = {
         format = "{:%a %d %b  %H:%M}";
         tooltip-format = "<tt>{calendar}</tt>";
       };
+      "hyprland/language".format = "{short}";
       cpu.format = "󰻠 {usage}%";
       memory.format = "󰍛 {percentage}%";
       pulseaudio = {
@@ -153,7 +156,7 @@
         color: #e0e0e0;
       }
       #workspaces button.active { background: #3b4252; }
-      #clock, #cpu, #memory, #network, #pulseaudio, #tray {
+      #clock, #language, #cpu, #memory, #network, #pulseaudio, #tray {
         padding: 0 10px;
       }
     '';
