@@ -1,6 +1,8 @@
 { ... }:
 
 {
+  home.shellAliases.nhoss = "nh os switch";
+
   programs.bash = {
     enable = true;
     historyControl = [ "ignoredups" "ignorespace" ];

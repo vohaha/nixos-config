@@ -4,7 +4,10 @@
 {
   users.users.vh = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ]; # sudo
+    extraGroups = [
+      "wheel" # sudo
+      "input" # lets showmethekey read /dev/input/event* directly
+    ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBqUVrUu7Dd5ErD2tKh8laD7lkqVuteSlZKtF72TyMaI"
     ];

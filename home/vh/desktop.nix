@@ -16,11 +16,33 @@
     pavucontrol # audio mixer GUI
     playerctl # media keys
     brightnessctl # backlight / monitor brightness
+    vicinae # Raycast-like launcher, bound to SUPER+R in hyprland.lua
+    showmethekey # on-screen display of keys being pressed
   ];
 
   home.activation.linkHyprlandLua = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run ln -sfn "${config.home.homeDirectory}/nixos-config/home/vh/hypr/hyprland.lua" "${config.home.homeDirectory}/.config/hypr/hyprland.lua"
   '';
+
+  # Vicinae is a client/server launcher: the server must run in the
+  # background, `vicinae toggle` (bound to SUPER+R in hyprland.lua) talks to it.
+  systemd.user.services.vicinae = {
+    Unit = {
+      Description = "Vicinae launcher server";
+      # graphical-session.target can fire before Hyprland's Wayland socket
+      # is actually ready, causing an early SIGABRT crash loop that trips
+      # systemd's default StartLimitBurst (5 restarts / 10s) and gives up
+      # for good. Widen the limit so restarts keep going until Wayland is up.
+      StartLimitIntervalSec = 60;
+      StartLimitBurst = 10;
+    };
+    Service = {
+      ExecStart = "${pkgs.vicinae}/bin/vicinae server";
+      Restart = "on-failure";
+      RestartSec = 2;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
 
   # xdg.desktopEntries installs into share/applications (app launcher), not
   # ~/.config/autostart, so this needs a plain xdg.configFile instead.

@@ -30,7 +30,10 @@ hl.monitor({
 -- Set programs that you use
 local terminal    = "ghostty"
 local fileManager = "dolphin"
-local menu        = "wofi --show drun"
+local menu        = "vicinae toggle"
+-- pkill -x matches against the kernel's truncated 15-char comm name, so the
+-- full 16-char "showmethekey-gtk" never matches -- truncate to match it.
+local showKeys    = "pkill -x showmethekey-gt || showmethekey-gtk"
 
 
 -------------------
@@ -261,6 +264,24 @@ hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + SHIFT + F6", hl.dsp.exec_cmd(showKeys))
+
+-- Pin the keys overlay to the top-right corner instead of wherever it opens.
+-- Needs float+pin (per upstream docs): Wayland gives clients no protocol to
+-- set their own position/layer, so the compositor has to place it.
+hl.window_rule({
+    name  = "showmethekey-overlay-top-right",
+    match = { class = "^(showmethekey-gtk|one\\.alynx\\.showmethekey)$", title = "^(Floating Window.*)$" },
+    float = true,
+    pin   = true,
+    move  = "100%-w 0",
+})
+-- Keep the settings window floating too, but out of the overlay's way.
+hl.window_rule({
+    name  = "showmethekey-settings-floating",
+    match = { class = "^(showmethekey-gtk|one\\.alynx\\.showmethekey)$", title = "^Show Me The Key$" },
+    float = true,
+})
 -- hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
 hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("hyprshot -m region"))
