@@ -16,8 +16,9 @@
     pavucontrol # audio mixer GUI
     playerctl # media keys
     brightnessctl # backlight / monitor brightness
-    vicinae # Raycast-like launcher, bound to SUPER+R in hyprland.lua
+    vicinae # Raycast-like launcher, bound to SUPER+SPACE in hyprland.lua
     showmethekey # on-screen display of keys being pressed
+    spotify
   ];
 
   programs.yazi.enable = true;

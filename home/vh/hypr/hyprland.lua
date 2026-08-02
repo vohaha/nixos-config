@@ -322,6 +322,9 @@ local workspaceApps = {
     [1] = { class = "firefox",             cmd = browser },
     [2] = { class = "com.mitchellh.ghostty", cmd = terminal },
     [3] = { class = "dev.zed.Zed",         cmd = "zeditor" },
+    [4] = { class = "steam",               cmd = "steam" },
+    [5] = { class = "Spotify",             cmd = "spotify" },
+    [10] = { class = "bitwarden",          cmd = "bitwarden" },
 }
 
 -- Focus an existing window of `class` if one exists (switching to its
@@ -395,6 +398,14 @@ hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = tr
 
 -- See https://wiki.hypr.land/Configuring/Basics/Window-Rules/
 -- and https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
+
+-- Pin Bitwarden to workspace 10 (matches the SUPER+0 raise-or-run binding)
+-- so its autostarted window doesn't land wherever happens to be active.
+hl.window_rule({
+    name  = "bitwarden-workspace",
+    match = { class = "^bitwarden$" },
+    workspace = "10",
+})
 
 -- Example window rules that are useful
 
