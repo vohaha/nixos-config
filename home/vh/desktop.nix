@@ -19,6 +19,7 @@
     vicinae # Raycast-like launcher, bound to SUPER+SPACE in hyprland.lua
     showmethekey # on-screen display of keys being pressed
     spotify
+    discord
   ];
 
   programs.yazi.enable = true;
