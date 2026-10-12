@@ -59,10 +59,6 @@ local showKeys    = "pkill -x showmethekey-gt || showmethekey-gtk"
 
 -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Environment-variables/
 
-hl.env("XCURSOR_SIZE", "24")
-hl.env("HYPRCURSOR_SIZE", "24")
-
-
 -----------------------
 ----- PERMISSIONS -----
 -----------------------
@@ -225,6 +221,16 @@ hl.config({
 ---------------
 
 hl.config({
+    cursor = {
+        inactive_timeout = 0, -- Keep the cursor visible when it is idle.
+        invisible = false,
+        hide_on_key_press = false,
+        hide_on_touch = false,
+        hide_on_tablet = false,
+        no_hardware_cursors = 1, -- Work around cursor disappearing on Hyprland 0.56.x.
+        enable_hyprcursor = false, -- Use the regular XCursor theme below.
+    },
+
     input = {
         kb_layout  = "us,ua",
         kb_variant = "",

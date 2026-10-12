@@ -11,6 +11,7 @@
   home.sessionVariables.SSH_AUTH_SOCK = "${config.home.homeDirectory}/.bitwarden-ssh-agent.sock";
 
   home.packages = with pkgs; [
+    adwaita-icon-theme # regular XCursor theme for Hyprland and GTK apps
     hyprshot # screenshot (native Hyprland wrapper over grim+slurp)
     wl-clipboard # wl-copy / wl-paste
     pavucontrol # audio mixer GUI
@@ -74,6 +75,14 @@
     StartupNotify=false
     Terminal=false
   '';
+
+  # Use the regular Adwaita XCursor theme for Hyprland and desktop apps.
+  home.pointerCursor = {
+    enable = true;
+    package = pkgs.adwaita-icon-theme;
+    name = "Adwaita";
+    size = 24;
+  };
 
   # Notification daemon.
   services.mako = {
