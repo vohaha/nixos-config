@@ -356,6 +356,7 @@ end
 
 -- mainMod + [0-9]:               raise-or-run that workspace's app
 -- mainMod + SHIFT + [0-9]:       launch that workspace's app on the CURRENT workspace
+-- Explicit window rules below take precedence over the launch workspace.
 -- mainMod + ALT + SHIFT + [0-9]: move the active window to that workspace
 for i = 1, 10 do
     local key = i % 10 -- 10 maps to key 0
@@ -417,6 +418,15 @@ hl.window_rule({
     name  = "bitwarden-workspace",
     match = { class = "^bitwarden$" },
     workspace = "10",
+})
+
+-- Steam creates its main window after startup, possibly after we have left
+-- workspace 4. Match the client class rather than relying on launch timing
+-- or PID-based exec rules, and do not interrupt the current workspace.
+hl.window_rule({
+    name  = "steam-workspace",
+    match = { class = "^steam$" },
+    workspace = "4 silent",
 })
 
 -- Pin Firefox to workspace 1 (matches the SUPER+1 raise-or-run binding) so
